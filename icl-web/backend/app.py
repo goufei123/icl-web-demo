@@ -11,7 +11,7 @@ CORS(app)
 @app.route('/methods')
 def get_methods():
     examples = []
-    file_path = "./output/cls_example_0_2000.json"
+    file_path = "examples.json"
     time.sleep(5)
     with open(file_path, "r") as f:
         for line in f:
