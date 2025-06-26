@@ -1,29 +1,37 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import time
 import json
+import os
+import time
+from random import random
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/methods', methods=['POST'])  # ✅ 明确支持 POST
-def get_examples():
-    data = request.get_json()  # ✅ 获取 JSON 中的 prompt
-    prompt = data.get('prompt', '')
+@app.route('/methods')
+def get_methods():
+    examples = []
+    file_path = "./output/cls_example_0_2000.json"
+    time.sleep(5)
+    with open(file_path, "r") as f:
+        for line in f:
+            try:
+                example = json.loads(line.strip())
+                examples.append(example)
+            except json.JSONDecodeError:
+                continue
+    # For resource constraints,
+    # we use random sampling to simulate model-based example selection
+    selected = random.sample(examples, 5)
+    result = []
+    for idx, item in enumerate(selected, start=1):
+        content = f"Example {idx}: {item['comment']}\n{item['ori_code']}"
+        result.append({
+            "id": idx,
+            "content": content
+        })
+    return jsonify(result)
 
-    # 模拟计算延迟
-    time.sleep(1)
-
-    # 简单示例：根据首字母决定返回哪个 example
-    with open('examples.json', 'r') as f:
-        examples = json.load(f)
-
-    first_char = prompt.strip().lower()[:1]
-    if 'a' <= first_char <= 'e':
-        selected = examples[0]
-    elif 'f' <= first_char <= 'm':
-        selected = examples[1]
-    else:
-        selected = examples[2]
-
-    return jsonify([selected])
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
