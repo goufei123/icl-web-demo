@@ -1,13 +1,15 @@
 import json
 import os
 import time
-from random import random
+import random
 from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
 
+# For resource constraints,
+# we use random sampling to simulate model-based example selection
 @app.route('/methods')
 def get_methods():
     examples = []
@@ -20,8 +22,6 @@ def get_methods():
                 examples.append(example)
             except json.JSONDecodeError:
                 continue
-    # For resource constraints,
-    # we use random sampling to simulate model-based example selection
     selected = random.sample(examples, 5)
     result = []
     for idx, item in enumerate(selected, start=1):
