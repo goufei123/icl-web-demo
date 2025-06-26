@@ -1,8 +1,9 @@
+import os
 from flask import Flask, jsonify
-from flask_cors import CORS  # ✅ 导入 CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # ✅ 启用所有跨域访问（允许前端访问此接口）
+CORS(app)
 
 @app.route('/methods')
 def get_methods():
@@ -12,4 +13,5 @@ def get_methods():
     ])
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # 从环境变量获取端口（Render使用）
+    app.run(host='0.0.0.0', port=port, debug=True)
