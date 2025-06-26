@@ -1,17 +1,29 @@
-import os
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+import time
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/methods')
-def get_methods():
-    return jsonify([
-        { "id": 1, "content": "Example 1: Print Hello World" },
-        { "id": 2, "content": "Example 2: Function to compute factorial" }
-    ])
+@app.route('/methods', methods=['POST'])  # ✅ 明确支持 POST
+def get_examples():
+    data = request.get_json()  # ✅ 获取 JSON 中的 prompt
+    prompt = data.get('prompt', '')
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # 从环境变量获取端口（Render使用）
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # 模拟计算延迟
+    time.sleep(1)
+
+    # 简单示例：根据首字母决定返回哪个 example
+    with open('examples.json', 'r') as f:
+        examples = json.load(f)
+
+    first_char = prompt.strip().lower()[:1]
+    if 'a' <= first_char <= 'e':
+        selected = examples[0]
+    elif 'f' <= first_char <= 'm':
+        selected = examples[1]
+    else:
+        selected = examples[2]
+
+    return jsonify([selected])

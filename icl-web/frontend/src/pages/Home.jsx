@@ -1,10 +1,5 @@
 import React, { useState } from "react";
 
-const dummyExamples = [
-  { id: 1, content: "Example 1: Print Hello World (for input <= 50)" },
-  { id: 2, content: "Example 2: Compute Factorial (for input > 50)" }
-];
-
 const Home = () => {
   const [prompt, setPrompt] = useState("");
   const [results, setResults] = useState([]);
@@ -25,16 +20,16 @@ const Home = () => {
   //   }
   // };
 
-  const handleRecommend = async () => {
+const handleRecommend = async () => {
   if (!prompt.trim()) {
     setResults([]);
     return;
   }
 
-  const res = await fetch("http://localhost:5000/methods", {
+  const res = await fetch("https://icl-web-demo.onrender.com/methods", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt }),
+    body: JSON.stringify({ prompt }),  // ✅ 将 prompt 作为 JSON 发送给后端
   });
 
   const data = await res.json();
